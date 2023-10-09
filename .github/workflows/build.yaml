@@ -1,0 +1,28 @@
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.2'
+      - name: Build amd64
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -buildvcs=false -o appfuk-x86_64
+      - name: Build arm64
+        run: |
+          GOOS=darwin GOARCH=arm64 go build -buildvcs=false -o appfuk-arm64
+      - name: Lipo
+        run: |
+          curl -L -o /tmp/lipo https://github.com/konoui/lipo/releases/latest/download/lipo_linux_amd64
+          chmod u+x /tmp/lipo
+          /tmp/lipo -create appfuk-x86_64 appfuk-arm64 -output appfuk
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: appfuk
+          path: |
+            appfuk
