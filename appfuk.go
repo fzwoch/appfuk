@@ -97,26 +97,27 @@ func deps(exe string, indent string) {
 		_, err = os.Stat(filepath.Join(frameworks, file))
 		if err == nil {
 			fmt.Println(indent + "  [skip] " + file)
-			continue
-		}
+		} else {
+			fmt.Println(indent + "  [copy] " + file)
 
-		fmt.Println(indent + "  [copy] " + file)
+			i, err := os.Open(paths.absolute)
+			if err != nil {
+				panic(err)
+			}
+			o, err := os.Create(filepath.Join(frameworks, file))
+			if err != nil {
+				panic(err)
+			}
 
-		i, err := os.Open(paths.absolute)
-		if err != nil {
-			panic(err)
-		}
-		o, err := os.Create(filepath.Join(frameworks, file))
-		if err != nil {
-			panic(err)
-		}
+			_, err = io.Copy(o, i)
+			if err != nil {
+				panic(err)
+			}
+			i.Close()
+			o.Close()
 
-		_, err = io.Copy(o, i)
-		if err != nil {
-			panic(err)
+			next = append(next, paths)
 		}
-		i.Close()
-		o.Close()
 
 		dst := filepath.Join(frameworks, f)
 		if strings.Contains(exe, "/Contents/MacOS") {
@@ -127,8 +128,6 @@ func deps(exe string, indent string) {
 		if err != nil {
 			panic(err)
 		}
-
-		next = append(next, paths)
 	}
 
 	for _, paths := range next {
