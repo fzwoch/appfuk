@@ -49,14 +49,6 @@ func deps(exe string, indent string) {
 		next []paths
 	)
 
-	f := filepath.Base(exe)
-	exe, err := filepath.EvalSymlinks(exe)
-	if err != nil {
-		panic(err)
-	}
-	dir := filepath.Dir(exe)
-	exe = filepath.Join(dir, f)
-
 	out, err := exec.Command(otool, "-L", exe).Output()
 	if err != nil {
 		panic(err)
@@ -65,18 +57,19 @@ func deps(exe string, indent string) {
 	scanner := bufio.NewScanner(bytes.NewReader(out))
 	scanner.Scan()
 	for scanner.Scan() {
-		searched := strings.TrimSpace(scanner.Text())
-		searched = strings.Fields(searched)[0]
-		if searched == "" || strings.HasPrefix(searched, "/usr/lib/") || strings.HasPrefix(searched, "/System/Library/") {
-			continue
-		}
-		if filepath.Base(exe) == filepath.Base(searched) {
+		searched := strings.Fields(strings.TrimSpace(scanner.Text()))[0]
+		if filepath.Base(exe) == filepath.Base(searched) || strings.HasPrefix(searched, "/usr/lib/") || strings.HasPrefix(searched, "/System/Library/") {
 			continue
 		}
 
 		absolute := searched
 		if strings.HasPrefix(searched, "@") {
-			absolute = strings.Replace(absolute, absolute[:strings.Index(absolute, "/")], dir, 1)
+			tmp, err := filepath.EvalSymlinks(exe)
+			if err != nil {
+				panic(err)
+			}
+
+			absolute = strings.Replace(absolute, absolute[:strings.Index(absolute, "/")], filepath.Dir(tmp), 1)
 		}
 
 		absolute, err = filepath.Abs(absolute)
@@ -119,7 +112,7 @@ func deps(exe string, indent string) {
 			next = append(next, paths)
 		}
 
-		dst := filepath.Join(frameworks, f)
+		dst := filepath.Join(frameworks, filepath.Base(exe))
 		if strings.Contains(exe, "/Contents/MacOS") {
 			dst = exe
 		}
