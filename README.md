@@ -12,3 +12,5 @@ $ appfuk ~/MyApp.app/Contents/MacOS/myapp
 ```
 
 This copies non-system linked libraries and all its dependencies into your bundle's `Frameworks` directory and rewrites the link locations. Make sure your executable and dependencies are compiled with the `-headerpad_max_install_names` option.
+
+Note that this process invalidades existing code signatures.
