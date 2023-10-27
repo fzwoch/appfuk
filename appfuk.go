@@ -168,7 +168,7 @@ func main() {
 		panic("unexpected bundle structure")
 	}
 
-	frameworks, err = filepath.Abs(filepath.Join(dir, "../Frameworks"))
+	frameworks, err = filepath.Abs(filepath.Join(dir, "..", "Frameworks"))
 	if err != nil {
 		panic(nil)
 	}
