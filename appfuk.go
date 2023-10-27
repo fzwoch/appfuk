@@ -40,6 +40,7 @@ type paths struct {
 var (
 	otool             string
 	install_name_tool string
+	executable        string
 	frameworks        string
 )
 
@@ -113,11 +114,16 @@ func deps(exe string, indent string) {
 		}
 
 		dst := filepath.Join(frameworks, filepath.Base(exe))
-		if strings.Contains(exe, "/Contents/MacOS") {
+		if exe == executable {
 			dst = exe
 		}
 
-		err = exec.Command(install_name_tool, "-change", paths.searched, "@executable_path/../Frameworks/"+file, dst).Run()
+		rel, err := filepath.Rel(filepath.Dir(executable), frameworks)
+		if err != nil {
+			panic(err)
+		}
+
+		err = exec.Command(install_name_tool, "-change", paths.searched, "@executable_path/"+filepath.Join(rel, file), dst).Run()
 		if err != nil {
 			panic(err)
 		}
@@ -129,6 +135,8 @@ func deps(exe string, indent string) {
 }
 
 func main() {
+	var err error
+
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [options] <path/to/some.app/Contents/MacOS/exe>\n", os.Args[0])
 		flag.PrintDefaults()
@@ -142,22 +150,22 @@ func main() {
 		os.Exit(1)
 	}
 
-	exe, err := filepath.Abs(flag.Args()[0])
+	executable, err = filepath.Abs(flag.Args()[0])
 	if err != nil {
 		panic(err)
 	}
 
-	info, err := os.Stat(exe)
+	info, err := os.Stat(executable)
 	if err != nil {
 		panic(err)
 	}
 	if info.IsDir() {
-		panic(exe + " is a directory")
+		panic(executable + " is a directory")
 	}
 
-	dir := filepath.Dir(exe)
+	dir := strings.SplitAfter(filepath.Dir(executable), "/Contents/MacOS")[0]
 	if !strings.HasSuffix(dir, "/Contents/MacOS") {
-		panic("no bundle structure")
+		panic("unexpected bundle structure")
 	}
 
 	frameworks, err = filepath.Abs(filepath.Join(dir, "../Frameworks"))
@@ -172,5 +180,5 @@ func main() {
 		}
 	}
 
-	deps(exe, "")
+	deps(executable, "")
 }
