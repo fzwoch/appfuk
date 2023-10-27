@@ -170,7 +170,7 @@ func main() {
 
 	frameworks, err = filepath.Abs(filepath.Join(dir, "..", "Frameworks"))
 	if err != nil {
-		panic(nil)
+		panic(err)
 	}
 	_, err = os.Stat(frameworks)
 	if err != nil {
