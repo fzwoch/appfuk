@@ -29,6 +29,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -163,8 +164,9 @@ func main() {
 		panic(executable + " is a directory")
 	}
 
-	dir := strings.SplitAfter(filepath.Dir(executable), "/Contents/MacOS")[0]
-	if !strings.HasSuffix(dir, "/Contents/MacOS") {
+	r := regexp.MustCompile(`.*\.app\/Contents\/MacOS`)
+	dir := filepath.FromSlash(r.FindString(filepath.ToSlash(filepath.Dir(executable))))
+	if dir == "" {
 		panic("unexpected bundle structure")
 	}
 
