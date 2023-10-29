@@ -1,4 +1,4 @@
-# appfuk
+# AppFuk
 
 Make macOS application bundles deployable.
 

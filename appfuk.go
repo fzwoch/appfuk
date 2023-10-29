@@ -45,6 +45,8 @@ var (
 	frameworks        string
 )
 
+const version = "0.0.0"
+
 func deps(exe string, indent string) {
 	var (
 		libs []paths
@@ -139,7 +141,12 @@ func main() {
 	var err error
 
 	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "AppFuk - Make App bundles deployable - %s\n", version)
+		fmt.Fprintf(flag.CommandLine.Output(), "Copyright (C) 2023 Florian Zwoch <fzwoch@gmail.com>\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [options] <path/to/some.app/Contents/MacOS/exe>\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "options:\n")
 		flag.PrintDefaults()
 	}
 	flag.StringVar(&otool, "otool", "otool", "otool executable")
