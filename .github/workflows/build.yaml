@@ -11,10 +11,10 @@ jobs:
           go-version: '1.21.2'
       - name: Build amd64
         run: |
-          GOOS=darwin GOARCH=amd64 go build -buildvcs=false -o appfuk-x86_64
+          GOOS=darwin GOARCH=amd64 go build -buildvcs=false -ldflags="-X main.version=$(git describe --always --tags)" -o appfuk-x86_64
       - name: Build arm64
         run: |
-          GOOS=darwin GOARCH=arm64 go build -buildvcs=false -o appfuk-arm64
+          GOOS=darwin GOARCH=arm64 go build -buildvcs=false -ldflags="-X main.version=$(git describe --always --tags)" -o appfuk-arm64
       - name: Lipo
         run: |
           curl -L -o /tmp/lipo https://github.com/konoui/lipo/releases/latest/download/lipo_linux_amd64

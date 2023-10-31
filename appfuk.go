@@ -43,9 +43,8 @@ var (
 	install_name_tool string
 	executable        string
 	frameworks        string
+	version           string = "0.0.0"
 )
-
-const version = "0.0.0"
 
 func deps(exe string, indent string) {
 	var (
@@ -141,7 +140,7 @@ func main() {
 	var err error
 
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "AppFuk - Make macOS App bundles deployable - %s\n", version)
+		fmt.Fprintf(flag.CommandLine.Output(), "AppFuk - Make macOS application bundles deployable (%s)\n", version)
 		fmt.Fprintf(flag.CommandLine.Output(), "Copyright (C) 2023 Florian Zwoch <fzwoch@gmail.com>\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [options] <path/to/some.app/Contents/MacOS/exe>\n", os.Args[0])
