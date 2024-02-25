@@ -26,7 +26,7 @@ jobs:
           /tmp/lipo -create appfuk-x86_64 appfuk-arm64 -output appfuk
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: appfuk
           path: |
