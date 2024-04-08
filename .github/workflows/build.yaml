@@ -7,9 +7,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: '1.22.0'
+          go-version: '>=1.22.0'
+          cache: false
 
       - name: Build amd64
         run: |
@@ -21,9 +22,8 @@ jobs:
 
       - name: Lipo
         run: |
-          curl -L -o /tmp/lipo https://github.com/konoui/lipo/releases/latest/download/lipo_linux_amd64
-          chmod u+x /tmp/lipo
-          /tmp/lipo -create appfuk-x86_64 appfuk-arm64 -output appfuk
+          go install github.com/konoui/lipo@latest
+          lipo -create appfuk-x86_64 appfuk-arm64 -output appfuk
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
