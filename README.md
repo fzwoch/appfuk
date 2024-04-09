@@ -4,6 +4,12 @@ Make macOS application bundles deployable.
 
 For some reason Apple does not provide any tool to do this. Therefore there are plenty of tools out there to help with that. This is one of them.
 
+## Install
+
+```shell
+$ go install github.com/fzwoch/appfuk@latest
+```
+
 ## Usage
 Since your application's main executable in your bundle may be a wrapper, it is often not enough to read the executable entry from the `Info.plist`. Also, you may have additional helper binaries located in your bundle. This tool expects you to point it directly to the executable inside your bundle.
 
