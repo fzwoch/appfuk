@@ -43,7 +43,7 @@ var (
 	install_name_tool string
 	executable        string
 	frameworks        string
-	version           string = "0.0.0"
+	version           string = "1.0.1"
 )
 
 func deps(exe string, indent string) {
